@@ -1,0 +1,1 @@
+FROM ds-9101aa230624:8083/phpmyadmin/phpmyadmin:latest

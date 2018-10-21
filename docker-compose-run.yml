@@ -1,0 +1,36 @@
+version: "3"
+services: 
+  phpmyadmin: 
+    image:  ${DockerRegistryServer}/${JOB_NAME}_phpmyadmin/phpmyadmin:${BUILD_NUMBER}
+    hostname: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+
+    
+
+  webserver: 
+    image:  ${DockerRegistryServer}/${JOB_NAME}_webserver:${BUILD_NUMBER}
+    links: 
+      - phpmyadmin
+    hostname: webserver
+    environment:
+    ports:
+      - "6080:80"
+      - "5443:443"
+      
+
+  mysql: 
+    image:  ${DockerRegistryServer}/${JOB_NAME}_mysql:${BUILD_NUMBER}
+    ports:
+      - "3306:3306"
+    links: 
+      - webserver
+      - phpmyadmin
+    environment:
+      MYSQL_ROOT_PASSWORD: tiger
+      MYSQL_DATABASE: png
+      MYSQL_USER: root
+      MYSQL_PASSWORD: tiger
+    
+

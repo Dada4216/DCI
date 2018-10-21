@@ -1,0 +1,58 @@
+version: "3"
+
+services:
+
+  phpmyadmin:
+    build: 
+     context: ./bin/phpmyadmin
+    image: ${JOB_NAME}_phpmyadmin/phpmyadmin:${BUILD_NUMBER}
+    container_name: 'png-phpmyadmin'
+    hostname: phpmyadmin
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - '5086:80'
+    volumes: 
+      - /sessions
+  
+  webserver:
+    build: 
+     context: ./bin/webserver
+     #dockerfile: Dockerfile
+     args: 
+      - http_proxy
+      - https_proxy
+    image: ${JOB_NAME}_webserver:${BUILD_NUMBER}
+    container_name: 'png-webserver'
+    restart: 'always'
+    ports:
+      - "6080:80"
+      - "5443:443"
+    links: 
+      - mysql
+    volumes: 
+      - ${DOCUMENT_ROOT-./www}:/var/www/html
+      - ${PHP_INI-./config/php/php.ini}:/usr/local/etc/php/php.ini
+      - ${VHOSTS_DIR-./config/vhosts}:/etc/apache2/sites-enabled
+      - ${LOG_DIR-./logs/apache2}:/var/log/apache2
+  mysql:
+    build: 
+     context: ./bin/mysql
+    image: ${JOB_NAME}_mysql:${BUILD_NUMBER}
+    container_name: 'png-mysql'
+    restart: 'always'
+    ports:
+      - "3306:3306"
+    volumes: 
+      - ${MYSQL_DATA_DIR-./data/mysql}:/var/lib/mysql
+      - ${MYSQL_LOG_DIR-./logs/mysql}:/var/log/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: tiger
+      MYSQL_DATABASE: png
+      MYSQL_USER: root
+      MYSQL_PASSWORD: tiger
+    
+  
