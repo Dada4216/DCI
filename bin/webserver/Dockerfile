@@ -1,4 +1,4 @@
-FROM ds-9101aa230624:8083/php:7.1.20-apache
+FROM php:7.1.20-apache
 
 #RUN apt-get -y update --fix-missing
 #RUN apt-get upgrade -y
