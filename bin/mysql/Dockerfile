@@ -1,1 +1,1 @@
-FROM ds-9101aa230624:8083/mysql:latest  
+FROM mysql:latest  
